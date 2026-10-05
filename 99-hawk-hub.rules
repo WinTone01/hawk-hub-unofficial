@@ -1,0 +1,3 @@
+# Hawk HM220 (kablolu 1d57:2027, 2.4 GHz alıcı 1d57:fa60): oturumdaki kullanıcıya hidraw erişimi
+KERNEL=="hidraw*", ATTRS{idVendor}=="1d57", ATTRS{idProduct}=="2027", TAG+="uaccess"
+KERNEL=="hidraw*", ATTRS{idVendor}=="1d57", ATTRS{idProduct}=="fa60", TAG+="uaccess"

@@ -1,0 +1,21 @@
+[package]
+name = "hawk-hub-unofficial"
+version = "0.3.0"
+edition = "2021"
+description = "Hawk Hub Unofficial — HM220 yapılandırma arayüzü (Windows + Linux)"
+license = "MIT"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+serde = { version = "1", features = ["derive"] }
+hm220 = { path = "../../hm220", default-features = false }
+sysinfo = "0.39.6"
+base64 = "0.23.1"
+tauri-plugin-dialog = "2.8.1"
+
+[target."cfg(windows)".dependencies]
+png = "0.18.1"
+windows-sys = { version = "0.61.2", features = ["Win32_Foundation", "Win32_UI_WindowsAndMessaging", "Win32_System_Threading", "Win32_Graphics_Gdi"] }

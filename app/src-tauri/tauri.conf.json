@@ -1,0 +1,38 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Hawk Hub Unofficial",
+  "version": "0.3.0",
+  "identifier": "dev.hawkhub.unofficial",
+  "build": {
+    "devUrl": "http://localhost:1420",
+    "frontendDist": "../dist",
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build"
+  },
+  "app": {
+    "withGlobalTauri": false,
+    "windows": [
+      {
+        "title": "Hawk Hub Unofficial",
+        "width": 1540,
+        "height": 900,
+        "minWidth": 1100,
+        "minHeight": 640,
+        "backgroundColor": "#231f20",
+        "center": true
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' ipc: http://ipc.localhost data: blob:"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["deb", "rpm", "appimage", "nsis"],
+    "icon": ["icons/icon.png", "icons/icon.ico"],
+    "linux": {
+      "deb": { "files": { "/usr/lib/udev/rules.d/99-hawk-hub.rules": "../../99-hawk-hub.rules" } },
+      "rpm": { "files": { "/usr/lib/udev/rules.d/99-hawk-hub.rules": "../../99-hawk-hub.rules" } }
+    }
+  }
+}

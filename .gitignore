@@ -1,0 +1,12 @@
+# Proprietary code extracted from the official Hawk Hub app (see re/extract-asar.ps1)
+re/app/
+
+# Hawk product photos, logo, fonts and 3D models (fetched by `npm run assets`)
+app/src/assets/hawk/
+
+# Build output
+target/
+__pycache__/
+
+# Local tool settings
+.claude/

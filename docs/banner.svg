@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="360" viewBox="0 0 1280 360" role="img" aria-label="Hawk Hub Unofficial">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2a2526"/>
+      <stop offset="1" stop-color="#191617"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#00e5ff" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#00e5ff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="shell" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4f6f7"/>
+      <stop offset="1" stop-color="#c9d1d6"/>
+    </linearGradient>
+    <pattern id="dots" width="22" height="22" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="1" fill="#ffffff" fill-opacity="0.05"/>
+    </pattern>
+  </defs>
+
+  <rect width="1280" height="360" rx="18" fill="url(#bg)"/>
+  <rect width="1280" height="360" rx="18" fill="url(#dots)"/>
+  <rect x="0.5" y="0.5" width="1279" height="359" rx="17.5" fill="none" stroke="#30363c"/>
+
+  <!-- Mouse (top view) -->
+  <g transform="translate(1010 182) rotate(-14) scale(0.9)">
+    <ellipse cx="0" cy="-70" rx="120" ry="120" fill="url(#glow)"/>
+    <path d="M0-150C-62-150-86-110-86-56V44C-86 112-48 150 0 150S86 112 86 44V-56C86-110 62-150 0-150Z" fill="url(#shell)"/>
+    <path d="M0-150V-34M-86-40C-40-30 40-30 86-40" stroke="#8e979e" stroke-width="2.5" fill="none"/>
+    <rect x="-11" y="-122" width="22" height="50" rx="11" fill="#1b1819"/>
+    <rect x="-7" y="-114" width="14" height="34" rx="7" fill="#00e5ff"/>
+    <rect x="-91" y="-26" width="8" height="30" rx="4" fill="#1b1819"/>
+    <rect x="-91" y="10" width="8" height="30" rx="4" fill="#1b1819"/>
+  </g>
+
+  <!-- Wordmark -->
+  <text x="72" y="150" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="64" font-weight="800" fill="#eef0f2" textLength="330" lengthAdjust="spacingAndGlyphs">HAWK HUB</text>
+  <rect x="428" y="110" width="168" height="38" rx="6" fill="none" stroke="#5a6168" stroke-width="2"/>
+  <text x="512" y="136" text-anchor="middle" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="17" font-weight="700" fill="#98a3ac" letter-spacing="4">UNOFFICIAL</text>
+  <text x="74" y="204" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="25" fill="#b8c0c6" textLength="586" lengthAdjust="spacingAndGlyphs">Open-source configurator for the Hawk HM220 mouse</text>
+  <text x="74" y="240" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="25" fill="#b8c0c6">on <tspan fill="#eef0f2" font-weight="700">Windows</tspan> and <tspan fill="#eef0f2" font-weight="700">Linux</tspan></text>
+
+  <g font-family="Consolas, Menlo, monospace" font-size="15" fill="#c9d1d6">
+    <rect x="74" y="276" width="104" height="34" rx="17" fill="#2c2829" stroke="#3d444b"/>
+    <text x="126" y="298" text-anchor="middle">DPI</text>
+    <rect x="190" y="276" width="124" height="34" rx="17" fill="#2c2829" stroke="#3d444b"/>
+    <text x="252" y="298" text-anchor="middle">RGB</text>
+    <rect x="326" y="276" width="124" height="34" rx="17" fill="#2c2829" stroke="#3d444b"/>
+    <text x="388" y="298" text-anchor="middle">Macros</text>
+    <rect x="462" y="276" width="124" height="34" rx="17" fill="#2c2829" stroke="#3d444b"/>
+    <text x="524" y="298" text-anchor="middle">Profiles</text>
+    <rect x="598" y="276" width="104" height="34" rx="17" fill="#2c2829" stroke="#3d444b"/>
+    <text x="650" y="298" text-anchor="middle">3D</text>
+  </g>
+</svg>
