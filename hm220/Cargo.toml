@@ -16,9 +16,15 @@ clap = { version = "4", features = ["derive"], optional = true }
 
 [target.'cfg(target_os = "linux")'.dependencies]
 libc = "0.2"
+dbus = "0.9"
 
 [target.'cfg(windows)'.dependencies]
 hidapi = { version = "2", default-features = false, features = ["windows-native"] }
+windows-sys = { version = "0.61", features = [
+    "Win32_Foundation",
+    "Win32_Devices_DeviceAndDriverInstallation",
+    "Win32_Devices_Properties",
+] }
 
 [[bin]]
 name = "hawk-hm220"

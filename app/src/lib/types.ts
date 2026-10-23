@@ -49,8 +49,11 @@ export interface DeviceView {
 }
 
 export interface DeviceStatus {
+  /** Yapılandırılabilir bağlantı (kablo veya 2.4 GHz alıcı). */
   device: DeviceView | null;
   battery: Battery | null;
+  /** Fare yalnızca Bluetooth LE ile bağlı: durum ve pil var, ayar yazılamaz. */
+  bluetooth: boolean;
 }
 
 export interface Status extends DeviceStatus {

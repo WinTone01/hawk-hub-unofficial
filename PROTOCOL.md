@@ -15,7 +15,7 @@ Kaynaklar:
 | PID | `0x2027` kablolu, `0xFA60` 2.4 GHz alıcı |
 | Komut kanalı | USB interface 2, usage page `0x000B`, feature report (Windows'ta koleksiyon boyu kabloluda 262, alıcıda 134 bayt) |
 | Olay kanalı | USB interface 2, usage page `0x000A`, input report: pil ve komut onayları |
-| Bluetooth | Yalnızca pil (Windows PnP özelliğinden) |
+| Bluetooth | BLE adı `HM220`, ayar kanalı yok: yalnızca bağlantı ve pil. Windows'ta `BTHLE\DEV_…` düğümünün özellikleri (`DEVPKEY_Device_FriendlyName`, bağlı `{83DA6326-97A6-4088-9453-A1923F573B29} 15`, pil `{104EA319-6EE2-4701-BD47-8DDBF425BBE5} 2`; Hawk Hub 1.0.21 ile aynı), Linux'ta BlueZ `org.bluez.Device1` + `org.bluez.Battery1`. Donanımda doğrulanmadı |
 
 Linux'ta interface 2'nin iki koleksiyonu tek bir `/dev/hidrawN` altında görünür.
 

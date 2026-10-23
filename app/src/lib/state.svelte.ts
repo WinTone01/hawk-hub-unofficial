@@ -56,6 +56,8 @@ class AppState {
   settings = $state<Settings | null>(null);
   device = $state<DeviceView | null>(null);
   battery = $state<Battery | null>(null);
+  /** Yalnızca Bluetooth LE ile bağlı (ayar yazılamaz). */
+  bluetooth = $state(false);
   configDir = $state("");
   busy = $state(0);
   /** Fareden ayar okunuyor. */
@@ -72,7 +74,7 @@ class AppState {
     this.catalog = catalog;
     this.settings = status.settings;
     this.configDir = status.configDir;
-    this.applyDevice(status);
+    this.applyDevice(status, true);
     await onDeviceStatus((s) => this.applyDevice(s));
     await onDpiStage((stage) => {
       if (!this.settings || this.settings.dpiStage === stage) return;
@@ -89,15 +91,31 @@ class AppState {
     });
   }
 
-  private applyDevice(s: DeviceStatus) {
+  /** Kablo, alıcı veya Bluetooth ile bağlı. */
+  get connected(): boolean {
+    return !!this.device || this.bluetooth;
+  }
+
+  get transport(): string | null {
+    return this.device?.transport ?? (this.bluetooth ? "Bluetooth" : null);
+  }
+
+  private applyDevice(s: DeviceStatus, initial = false) {
     const was = this.device?.path;
+    const wasBt = this.bluetooth;
     this.device = s.device;
     this.battery = s.battery;
+    this.bluetooth = s.bluetooth;
     if (s.device && was !== s.device.path) {
       if (was !== undefined) this.toast(`HM220 bağlandı (${s.device.transport})`, "info");
       void this.syncFromDevice();
     }
     if (!s.device && was) this.toast("HM220 bağlantısı kesildi", "err");
+    // Kablo/alıcıya geçişte ayrıca bildirim yok: yukarıdaki bildirim yeterli.
+    if (!initial && !s.device && !was && s.bluetooth !== wasBt) {
+      if (s.bluetooth) this.toast("HM220 Bluetooth ile bağlandı · ayarlar için kablo veya alıcı gerekir", "info");
+      else this.toast("HM220 Bluetooth bağlantısı kesildi", "err");
+    }
   }
 
   /** Farenin gerçek ayarlarını okur (fare ayarları kendi hafızasında tutar). */

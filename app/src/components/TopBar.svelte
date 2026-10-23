@@ -6,7 +6,7 @@
   import { app, type Page } from "../lib/state.svelte";
 
   const tabs: { label: string; active: Page[]; go: () => void }[] = [
-    { label: "Cihazlarım", active: ["devices", "device"], go: () => (app.page = app.device ? "device" : "devices") },
+    { label: "Cihazlarım", active: ["devices", "device"], go: () => (app.page = app.connected ? "device" : "devices") },
     { label: "Profiller", active: ["profiles"], go: () => (app.page = "profiles") },
     { label: "Ayarlar", active: ["settings"], go: () => (app.page = "settings") },
   ];
@@ -40,8 +40,8 @@
         <Icon name="sun" size={18} />
       </button>
     </div>
-    <span class="link-state" class:on={!!app.device} title={app.device ? `HM220 · ${app.device.transport}` : "Cihaz bağlı değil"}>
-      <Icon name={app.device?.transport.includes("2.4") ? "wifi" : "plug"} size={18} />
+    <span class="link-state" class:on={app.connected} title={app.transport ? `HM220 · ${app.transport}` : "Cihaz bağlı değil"}>
+      <Icon name={app.bluetooth ? "bluetooth" : app.device?.transport.includes("2.4") ? "wifi" : "plug"} size={18} />
     </span>
   </div>
 </header>

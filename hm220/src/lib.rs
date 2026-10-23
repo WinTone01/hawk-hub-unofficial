@@ -2,12 +2,14 @@
 //!
 //! Protokol Hawk Hub 1.0.20-beta'dan çıkarılmıştır (bkz. PROTOCOL.md).
 
+mod bluetooth;
 mod config;
 mod device;
 mod dpi;
 mod protocol;
 mod session;
 
+pub use bluetooth::{bluetooth_status, BluetoothStatus};
 pub use config::{
     auto_switch, config_dir, delete_profile, linked_profiles, list_profiles, load_profile, parse_hex_color, save_profile,
     set_auto_switch, set_profile_meta, AppLink, AutoSwitch, ButtonSetting, Config, ProfileInfo, ProfileMeta, Settings,

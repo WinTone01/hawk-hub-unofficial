@@ -17,9 +17,9 @@
     {#if img}<img src={img} alt="" draggable="false" />{:else}<span class="sketch"><MouseSketch /></span>{/if}
     <span class="info">
       <b>HM220</b>
-      <span class="sub">{app.device?.transport ?? "Bağlı değil"}</span>
+      <span class="sub">{app.transport ?? "Bağlı değil"}</span>
       {#if battery}<span class="sub batt"><Icon name="battery" size={13} />{battery}</span>{/if}
-      <span class="state" class:on={!!app.device}><i></i>{app.device ? "Algılandı" : "Bekleniyor"}</span>
+      <span class="state" class:on={app.connected}><i></i>{app.connected ? "Algılandı" : "Bekleniyor"}</span>
     </span>
   </button>
 

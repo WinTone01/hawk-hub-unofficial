@@ -76,6 +76,8 @@
       <span>Ayar klasörü</span><code>{app.configDir}</code>
       {#if app.device}
         <span>Cihaz</span><code>{app.device.transport} · PID {app.device.pid.toString(16).padStart(4, "0")}</code>
+      {:else if app.bluetooth}
+        <span>Cihaz</span><code>Bluetooth LE · yalnızca durum ve pil</code>
       {/if}
     </div>
   </section>

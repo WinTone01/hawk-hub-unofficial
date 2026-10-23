@@ -35,7 +35,15 @@
   </div>
 </div>
 
-{#if !app.device}
+{#if !app.device && app.bluetooth}
+  <div class="banner info" transition:fade={{ duration: 150 }}>
+    <Icon name="bluetooth" />
+    <div>
+      <b>HM220 Bluetooth ile bağlı.</b> Bluetooth'ta yalnızca bağlantı ve pil durumu okunabiliyor. Ayarları fareye
+      yazmak için kabloyu ya da 2.4 GHz alıcısını kullanın.
+    </div>
+  </div>
+{:else if !app.device}
   <div class="banner" transition:fade={{ duration: 150 }}>
     <Icon name="plug" />
     <div>
@@ -118,5 +126,12 @@
     flex: none;
     color: var(--warn);
     margin-top: 1px;
+  }
+  .banner.info {
+    border-color: var(--line);
+    background: var(--surface-2);
+  }
+  .banner.info :global(svg) {
+    color: var(--text-2);
   }
 </style>

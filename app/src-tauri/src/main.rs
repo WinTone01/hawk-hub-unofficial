@@ -11,7 +11,7 @@ mod apps;
 use std::path::Path;
 
 use hm220::{
-    config_dir, find_devices, parse_hex_color, AutoSwitch, Battery, Button, Config, Device, DeviceInfo, Event, Function,
+    bluetooth_status, config_dir, find_devices, parse_hex_color, AutoSwitch, Battery, Button, Config, Device, DeviceInfo, Event, Function,
     LedMode, Macro, ProfileInfo, ProfileMeta, Report, Session, Settings, FUNCTIONS, POLLING_RATES, RESPONSE_STEPS_MS,
 };
 use serde::Serialize;
@@ -49,8 +49,25 @@ impl From<&DeviceInfo> for DeviceView {
 
 #[derive(Serialize, Clone, PartialEq, Default)]
 struct DeviceStatus {
+    /// Yapılandırılabilir bağlantı (kablo veya 2.4 GHz alıcı).
     device: Option<DeviceView>,
     battery: Option<Battery>,
+    /// Fare yalnızca Bluetooth LE ile bağlı: durum ve pil var, ayar yazılamaz.
+    bluetooth: bool,
+}
+
+impl DeviceStatus {
+    /// USB ve alıcı yokken: Bluetooth LE bağlantısı varsa onu, yoksa bağlı değil.
+    fn bluetooth_only() -> Self {
+        match bluetooth_status() {
+            Some(bt) => DeviceStatus {
+                device: None,
+                battery: bt.battery.map(|level| Battery { level: Some(level), charging: false }),
+                bluetooth: true,
+            },
+            None => DeviceStatus::default(),
+        }
+    }
 }
 
 #[derive(Serialize)]
@@ -472,6 +489,7 @@ fn spawn_auto_switcher(app: AppHandle, write_lock: Arc<Mutex<()>>, log: Arc<Mute
 // ── Cihaz izleyici ──────────────────────────────────────────────────────────
 
 /// Cihazı takar/çıkarır ve pil raporlarını dinler; değişince `device-status` olayı yayar.
+/// USB ve alıcı yokken Bluetooth LE bağlantısı yoklanır (Hawk Hub da USB'yi öncelikli tutar).
 fn spawn_device_watcher(app: AppHandle, status: Arc<Mutex<DeviceStatus>>, write_lock: Arc<Mutex<()>>) {
     let events = app.clone();
     // Farenin DPI tuşu: kayıtlı ayarlardaki aktif kademeyi güncelle ve arayüze bildir.
@@ -496,7 +514,7 @@ fn spawn_device_watcher(app: AppHandle, status: Arc<Mutex<DeviceStatus>>, write_
     };
     thread::spawn(move || loop {
         let Some(info) = find_devices().into_iter().next() else {
-            publish(DeviceStatus::default());
+            publish(DeviceStatus::bluetooth_only());
             thread::sleep(Duration::from_secs(2));
             continue;
         };
@@ -505,18 +523,18 @@ fn spawn_device_watcher(app: AppHandle, status: Arc<Mutex<DeviceStatus>>, write_
             Ok(d) => d,
             Err(_) => {
                 // Bulundu ama açılamadı (ör. izin yok): bağlı göster, pil bilinmiyor.
-                publish(DeviceStatus { device: Some(view), battery: None });
+                publish(DeviceStatus { device: Some(view), battery: None, bluetooth: false });
                 thread::sleep(Duration::from_secs(3));
                 continue;
             }
         };
         let mut battery = None;
-        publish(DeviceStatus { device: Some(view.clone()), battery });
+        publish(DeviceStatus { device: Some(view.clone()), battery, bluetooth: false });
         loop {
             match dev.read_event(Duration::from_secs(5)) {
                 Ok(Some(Event::Battery(b))) => {
                     battery = Some(b);
-                    publish(DeviceStatus { device: Some(view.clone()), battery });
+                    publish(DeviceStatus { device: Some(view.clone()), battery, bluetooth: false });
                 }
                 Ok(Some(Event::DpiStage(stage))) => on_dpi_stage(stage),
                 // Profil değişince tüm ayarlar değişmiş olabilir: arayüz fareden yeniden okur.

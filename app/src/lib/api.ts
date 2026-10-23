@@ -178,7 +178,9 @@ const mock = (() => {
     settings: () => s,
     deviceStatus: (): DeviceStatus => {
       level = level > 5 ? level - (Math.random() < 0.2 ? 1 : 0) : 100;
-      return { device: { path: "/dev/hidraw3", pid: 0xfa60, transport: "2.4 GHz alıcı" }, battery: { level, charging: false } };
+      // `?bt` ile önizleme: fare yalnızca Bluetooth LE ile bağlı.
+      if (new URLSearchParams(location.search).has("bt")) return { device: null, battery: { level, charging: false }, bluetooth: true };
+      return { device: { path: "/dev/hidraw3", pid: 0xfa60, transport: "2.4 GHz alıcı" }, battery: { level, charging: false }, bluetooth: false };
     },
     handlers,
   };

@@ -77,6 +77,7 @@
 |---|---|---|---|
 | **Hawk HM220 V2** (PAW3311) | Wired | `1d57:2027` | Fully supported |
 | **Hawk HM220 V2** (PAW3311) | 2.4 GHz receiver | `1d57:fa60` | Fully supported, including wireless macro upload |
+| **Hawk HM220** | Bluetooth LE | — | Connection and battery only, like the official app (BLE has no settings channel). Linux: BlueZ, Windows: device properties. Not yet tested on hardware |
 
 Other Hawk devices (HM420, HM620, HK keyboards, HS420 headset) use different protocols and are not supported yet.
 
@@ -92,7 +93,7 @@ There are no prebuilt releases yet; build from source.
 - **Linux:** Tauri's system packages. On Debian/Ubuntu:
 
   ```bash
-  sudo apt install libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
+  sudo apt install libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev libdbus-1-dev pkg-config
   ```
 
 ### Build

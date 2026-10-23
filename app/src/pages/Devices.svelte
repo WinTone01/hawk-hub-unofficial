@@ -35,9 +35,9 @@
       {#if img}<img src={img} alt="Hawk HM220" draggable="false" />{:else}<MouseSketch />{/if}
     </div>
     <h2>Hawk HM220</h2>
-    <span class="state" class:on={!!app.device}><i></i>{app.device ? "Bağlı" : "Bağlı değil"}</span>
+    <span class="state" class:on={app.connected}><i></i>{app.connected ? "Bağlı" : "Bağlı değil"}</span>
     <div class="foot">
-      <span class="mono">Mouse · {app.device?.transport ?? "—"}</span>
+      <span class="mono">Mouse · {app.transport ?? "—"}</span>
       <button class="btn sm ghost" onclick={() => app.openDevice("general")}><Icon name="tune" size={16} />Ayarlar</button>
     </div>
   </div>

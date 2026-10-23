@@ -1,4 +1,4 @@
-//! Hawk HM220 komut satÄ±rÄ± aracÄ±.
+//! Hawk HM220 komut satırı aracı.
 
 use std::path::PathBuf;
 use std::process::ExitCode;
@@ -8,12 +8,12 @@ use clap::{Parser, Subcommand};
 use hm220::*;
 
 #[derive(Parser)]
-#[command(name = "hawk-hm220", about = "Hawk HM220 Linux yapÄ±landÄ±rma aracÄ±")]
+#[command(name = "hawk-hm220", about = "Hawk HM220 Linux yapılandırma aracı")]
 struct Cli {
-    /// hidraw yolu (varsayÄ±lan: otomatik)
+    /// hidraw yolu (varsayılan: otomatik)
     #[arg(long, global = true)]
     device: Option<PathBuf>,
-    /// Cihaza yazma, gÃ¶nderilecek frame'leri gÃ¶ster
+    /// Cihaza yazma, gönderilecek frame'leri göster
     #[arg(long, global = true)]
     dry_run: bool,
     #[command(subcommand)]
@@ -22,30 +22,32 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Cmd {
-    /// BaÄŸlÄ± HM220'leri listele
+    /// Bağlı HM220'leri listele
     List,
-    /// KayÄ±tlÄ± (son yazÄ±lan) ayarlarÄ± gÃ¶ster
+    /// Kayıtlı (son yazılan) ayarları göster
     Show,
-    /// Farenin gerÃ§ek ayarlarÄ±nÄ± okuyup kaydet ve gÃ¶ster
+    /// Farenin gerçek ayarlarını okuyup kaydet ve göster
     Sync,
     /// Pil durumunu oku
     Battery,
-    /// KayÄ±tlÄ± tÃ¼m ayarlarÄ± cihaza yeniden yaz
+    /// Bluetooth LE bağlantısını ve pilini göster (BlueZ / Windows cihaz özellikleri)
+    Bluetooth,
+    /// Kayıtlı tüm ayarları cihaza yeniden yaz
     Apply,
-    /// Hawk Hub varsayÄ±lanlarÄ±na dÃ¶ndÃ¼r
+    /// Hawk Hub varsayılanlarına döndür
     Reset,
-    /// DPI kademesi / deÄŸerleri
+    /// DPI kademesi / değerleri
     Dpi {
         /// Aktif kademe (1-5)
         #[arg(long)]
         stage: Option<u8>,
-        /// KADEME:DPI, Ã¶r. 2:1200 (tekrarlanabilir)
+        /// KADEME:DPI, ör. 2:1200 (tekrarlanabilir)
         #[arg(long = "set", value_parser = parse_stage_dpi)]
         set: Vec<(u8, u32)>,
     },
-    /// Raporlama hÄ±zÄ± (125, 250, 500, 1000)
+    /// Raporlama hızı (125, 250, 500, 1000)
     Polling { hz: u16 },
-    /// AydÄ±nlatma
+    /// Aydınlatma
     Led {
         /// off, neon, static, breathing
         #[arg(long)]
@@ -56,31 +58,31 @@ enum Cmd {
         /// 1-8
         #[arg(long)]
         brightness: Option<u8>,
-        /// 0-5 (0 en hÄ±zlÄ±)
+        /// 0-5 (0 en hızlı)
         #[arg(long)]
         speed: Option<u8>,
     },
-    /// TuÅŸ tepki sÃ¼resi (0, 2, 4, 8, 12 ms)
+    /// Tuş tepki süresi (0, 2, 4, 8, 12 ms)
     Response { ms: u8 },
-    /// AÃ§Ä± dÃ¼zeltme
+    /// Açı düzeltme
     AngleSnap { state: OnOff },
     /// Ripple control
     Ripple { state: OnOff },
-    /// TuÅŸ atama: left|right|middle|back|forward FONKSÄ°YON
+    /// Tuş atama: left|right|middle|back|forward FONKSİYON
     Button {
         button: hm220::Button,
-        /// Fonksiyon kimliÄŸi (bkz. `hawk-hm220 functions`)
+        /// Fonksiyon kimliği (bkz. `hawk-hm220 functions`)
         function: String,
     },
-    /// Atanabilir fonksiyonlarÄ± listele
+    /// Atanabilir fonksiyonları listele
     Functions,
-    /// Makro yÃ¼kle ve tuÅŸa ata
+    /// Makro yükle ve tuşa ata
     Macro {
         button: hm220::Button,
-        /// Makro yuvasÄ± 1-32
+        /// Makro yuvası 1-32
         #[arg(long, default_value_t = 1)]
         id: u8,
-        /// TUÅ:MS listesi, Ã¶r. 'h:50,i:50' veya '0x0b:50,enter:30'
+        /// TUŞ:MS listesi, ör. 'h:50,i:50' veya '0x0b:50,enter:30'
         #[arg(long, value_parser = parse_steps)]
         steps: Steps,
         #[arg(long, default_value_t = 1)]
@@ -91,17 +93,17 @@ enum Cmd {
         #[arg(long, default_value = "")]
         name: String,
     },
-    /// Makroyu sil, baÄŸlÄ± tuÅŸlarÄ± varsayÄ±lana dÃ¶ndÃ¼r
+    /// Makroyu sil, bağlı tuşları varsayılana döndür
     DeleteMacro { id: u8 },
-    /// [RE] Olay kanalÄ±nÄ± dinle ve gelen her mesajÄ± yaz (pil, onay, DPI tuÅŸu â€¦)
+    /// [RE] Olay kanalını dinle ve gelen her mesajı yaz (pil, onay, DPI tuşu …)
     Listen {
         /// Saniye
         #[arg(default_value_t = 15)]
         secs: u64,
     },
-    /// [RE] Komut arayÃ¼zÃ¼nÃ¼n HID rapor tanÄ±mlayÄ±cÄ±sÄ±nÄ± hex yaz
+    /// [RE] Komut arayüzünün HID rapor tanımlayıcısını hex yaz
     Descriptor,
-    /// [RE] Feature report oku: report ID (Ã¶r. 4 veya 0x04)
+    /// [RE] Feature report oku: report ID (ör. 4 veya 0x04)
     Get {
         #[arg(value_parser = parse_byte)]
         id: u8,
@@ -109,14 +111,14 @@ enum Cmd {
         #[arg(long, default_value_t = 64)]
         len: usize,
     },
-    /// [RE] Ham feature report yaz: hex baytlar, ilki report ID (Ã¶r. 05 0f 01 00 ...)
+    /// [RE] Ham feature report yaz: hex baytlar, ilki report ID (ör. 05 0f 01 00 ...)
     Raw {
         #[arg(value_parser = parse_byte, num_args = 1..)]
         bytes: Vec<u8>,
-        /// SÄ±fÄ±rlarla bu uzunluÄŸa doldur (report ID dahil)
+        /// Sıfırlarla bu uzunluğa doldur (report ID dahil)
         #[arg(long)]
         len: Option<usize>,
-        /// GÃ¶nderdikten sonra olay kanalÄ±nÄ± bu kadar ms dinle (komut onayÄ± 03 xx 50 durum id)
+        /// Gönderdikten sonra olay kanalını bu kadar ms dinle (komut onayı 03 xx 50 durum id)
         #[arg(long, default_value_t = 1500)]
         listen: u64,
     },
@@ -124,7 +126,7 @@ enum Cmd {
 
 fn parse_byte(s: &str) -> std::result::Result<u8, String> {
     let s = s.trim_start_matches("0x");
-    u8::from_str_radix(s, 16).map_err(|_| format!("geÃ§ersiz hex bayt: {s}"))
+    u8::from_str_radix(s, 16).map_err(|_| format!("geçersiz hex bayt: {s}"))
 }
 
 fn hex(bytes: &[u8]) -> String {
@@ -138,8 +140,8 @@ enum OnOff {
 }
 
 fn parse_stage_dpi(s: &str) -> std::result::Result<(u8, u32), String> {
-    let (a, b) = s.split_once(':').ok_or("KADEME:DPI biÃ§iminde olmalÄ±")?;
-    Ok((a.parse().map_err(|_| "geÃ§ersiz kademe")?, b.parse().map_err(|_| "geÃ§ersiz DPI")?))
+    let (a, b) = s.split_once(':').ok_or("KADEME:DPI biçiminde olmalı")?;
+    Ok((a.parse().map_err(|_| "geçersiz kademe")?, b.parse().map_err(|_| "geçersiz DPI")?))
 }
 
 #[derive(Clone)]
@@ -150,8 +152,8 @@ fn parse_steps(s: &str) -> std::result::Result<Steps, String> {
         .map(|part| {
             let (key, delay) = part.split_once(':').unwrap_or((part, "50"));
             Ok(MacroStep {
-                key: key_code(key).ok_or_else(|| format!("bilinmeyen tuÅŸ: {key}"))?,
-                delay: delay.trim().parse().map_err(|_| format!("geÃ§ersiz bekleme: {delay}"))?,
+                key: key_code(key).ok_or_else(|| format!("bilinmeyen tuş: {key}"))?,
+                delay: delay.trim().parse().map_err(|_| format!("geçersiz bekleme: {delay}"))?,
             })
         })
         .collect::<std::result::Result<Vec<_>, String>>()
@@ -160,22 +162,22 @@ fn parse_steps(s: &str) -> std::result::Result<Steps, String> {
 
 fn describe(s: &Settings) {
     let dpis: Vec<String> = s.dpi_values.iter().enumerate().map(|(i, d)| format!("{}={d}", i + 1)).collect();
-    let on = |b: bool| if b { "aÃ§Ä±k" } else { "kapalÄ±" };
+    let on = |b: bool| if b { "açık" } else { "kapalı" };
     println!("DPI kademesi : {}", s.dpi_stage);
-    println!("DPI deÄŸerleri: {}", dpis.join(", "));
-    println!("AÃ§Ä± dÃ¼zeltme : {}   Ripple: {}", on(s.angle_snap), on(s.ripple));
+    println!("DPI değerleri: {}", dpis.join(", "));
+    println!("Açı düzeltme : {}   Ripple: {}", on(s.angle_snap), on(s.ripple));
     println!("Polling      : {} Hz", s.polling_hz);
     println!(
-        "LED          : {:?}, renk {}, parlaklÄ±k {}, hÄ±z {}",
+        "LED          : {:?}, renk {}, parlaklık {}, hız {}",
         s.led_mode, s.led_color, s.led_brightness, s.led_speed
     );
-    println!("Tepki sÃ¼resi : {} ms", s.response_ms);
+    println!("Tepki süresi : {} ms", s.response_ms);
     for b in &s.buttons {
         let label = match b.macro_id {
             Some(id) => format!("makro {id}"),
             None => FUNCTIONS.iter().find(|f| f.code == b.code).map_or(format!("{:#04x}", b.code), |f| f.id.to_string()),
         };
-        println!("TuÅŸ {:<8}: {label}", format!("{:?}", b.button).to_lowercase());
+        println!("Tuş {:<8}: {label}", format!("{:?}", b.button).to_lowercase());
     }
 }
 
@@ -184,7 +186,7 @@ fn run(cli: Cli) -> hm220::Result<()> {
         Cmd::List => {
             let devs = find_devices();
             if devs.is_empty() {
-                println!("HM220 bulunamadÄ±.");
+                println!("HM220 bulunamadı.");
             }
             for d in devs {
                 println!("{}  {:04x}:{:04x}  {}", d.path.display(), VID, d.pid, d.transport());
@@ -198,6 +200,14 @@ fn run(cli: Cli) -> hm220::Result<()> {
         Cmd::Functions => {
             for f in FUNCTIONS {
                 println!("{:<18} {}", f.id, f.label);
+            }
+            return Ok(());
+        }
+        Cmd::Bluetooth => {
+            match bluetooth_status() {
+                None => println!("Bluetooth ile bağlı HM220 yok."),
+                Some(BluetoothStatus { battery: Some(l) }) => println!("Bluetooth: bağlı, pil %{l}"),
+                Some(_) => println!("Bluetooth: bağlı, pil bilinmiyor"),
             }
             return Ok(());
         }
@@ -238,7 +248,7 @@ fn run(cli: Cli) -> hm220::Result<()> {
                     buf.resize(*l, 0);
                 }
                 dev.send_raw(&buf)?;
-                println!("{} bayt gÃ¶nderildi", buf.len());
+                println!("{} bayt gönderildi", buf.len());
                 let end = std::time::Instant::now() + Duration::from_millis(*listen);
                 while let Some(left) = end.checked_duration_since(std::time::Instant::now()) {
                     match dev.read_input(left)? {
@@ -258,8 +268,8 @@ fn run(cli: Cli) -> hm220::Result<()> {
             None => Device::open_first()?,
         };
         match dev.read_battery(Duration::from_secs(5))? {
-            None => println!("Pil raporu gelmedi (fare birkaÃ§ saniyede bir yollar; tekrar deneyin)."),
-            Some(Battery { charging: true, .. }) => println!("Pil: ÅŸarj oluyor"),
+            None => println!("Pil raporu gelmedi (fare birkaç saniyede bir yollar; tekrar deneyin)."),
+            Some(Battery { charging: true, .. }) => println!("Pil: şarj oluyor"),
             Some(Battery { level: Some(l), .. }) => println!("Pil: %{l}"),
             Some(_) => println!("Pil: bilinmiyor"),
         }
@@ -331,7 +341,7 @@ fn run(cli: Cli) -> hm220::Result<()> {
             s.upload_macro(button, Macro { id, name, repeat, mode, steps: steps.0 })?;
         }
         Cmd::DeleteMacro { id } => s.delete_macro(id)?,
-        Cmd::List | Cmd::Show | Cmd::Functions | Cmd::Battery | Cmd::Listen { .. } | Cmd::Descriptor | Cmd::Get { .. } | Cmd::Raw { .. } => {
+        Cmd::List | Cmd::Show | Cmd::Functions | Cmd::Bluetooth | Cmd::Battery |Cmd::Listen { .. } | Cmd::Descriptor | Cmd::Get { .. } | Cmd::Raw { .. } => {
             unreachable!()
         }
     }
